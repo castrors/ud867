@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.jokeview.Constants;
@@ -20,11 +21,14 @@ import com.google.android.gms.ads.InterstitialAd;
 public class MainActivity extends AppCompatActivity implements EndpointCallback {
 
     InterstitialAd mInterstitialAd;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        progressBar = (ProgressBar) findViewById(R.id.progress);
 
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
@@ -80,16 +84,16 @@ public class MainActivity extends AppCompatActivity implements EndpointCallback 
     }
 
     private void goToJokeScreen() {
+        progressBar.setVisibility(View.VISIBLE);
         new EndpointsAsyncTask(this).execute(new Pair<Context, String>(this, "Manfred"));
     }
 
 
     @Override
     public void onResultOk(String value) {
-//        Joker joker = new Joker();
+        progressBar.setVisibility(View.GONE);
 
         Intent intent = new Intent(this, JokeActivity.class);
-//        intent.putExtra(Constants.PARAM_JOKE, joker.getJoke());
         intent.putExtra(Constants.PARAM_JOKE, value);
         this.startActivity(intent);
     }
