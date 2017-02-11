@@ -15,7 +15,12 @@ import java.io.IOException;
 
 class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
     private static MyApi myApiService = null;
+    private final EndpointCallback callback;
     private Context context;
+
+    public EndpointsAsyncTask(EndpointCallback callback){
+        this.callback = callback;
+    }
 
     @Override
     protected String doInBackground(Pair<Context, String>... params) {
@@ -46,12 +51,13 @@ class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> 
         try {
             return myApiService.sayHi(name).execute().getData();
         } catch (IOException e) {
+            callback.onError(e.getMessage());
             return e.getMessage();
         }
     }
 
     @Override
     protected void onPostExecute(String result) {
-        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+        callback.onResultOk(result);
     }
 }

@@ -1,17 +1,21 @@
 package com.udacity.gradle.builditbigger;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.Joker;
+import com.example.jokeview.Constants;
+import com.example.jokeview.JokeActivity;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EndpointCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,16 +47,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
-        Context context = view.getContext();
-        Joker joker = new Joker();
-//        Toast.makeText(this, joker.getJoke(), Toast.LENGTH_SHORT).show();
 
-        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "Manfred"));
-
-//        Intent intent = new Intent(context, JokeActivity.class);
-//        intent.putExtra(Constants.PARAM_JOKE, joker.getJoke());
-//        context.startActivity(intent);
+        new EndpointsAsyncTask(this).execute(new Pair<Context, String>(this, "Manfred"));
     }
 
 
+    @Override
+    public void onResultOk(String value) {
+//        Joker joker = new Joker();
+
+        Intent intent = new Intent(this, JokeActivity.class);
+//        intent.putExtra(Constants.PARAM_JOKE, joker.getJoke());
+        intent.putExtra(Constants.PARAM_JOKE, value);
+        this.startActivity(intent);
+    }
+
+    @Override
+    public void onError(String error) {
+        Toast.makeText(this, "Something is wrong: "+error, Toast.LENGTH_SHORT).show();
+    }
 }
